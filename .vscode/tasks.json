@@ -1,0 +1,17 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "Publish to GitHub Pages",
+            "type": "shell",
+            "command": "npx angular-cli-ghpages --dir=dist/Dzialajacy-dziennik"
+        },
+        {
+          "label": "Build angular app",
+          "type": "shell",
+          "command": "ng build --prod --base-href \"https://GitHubUserName.github.io/GitHubfolderName/\""
+        }
+    ]
+}
