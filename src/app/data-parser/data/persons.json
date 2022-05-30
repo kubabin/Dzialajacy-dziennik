@@ -1,0 +1,32 @@
+{
+  "students":
+  {
+    "0": {
+      "name": "John",
+      "birthday": "2000-01-01"
+      },
+    "1": {
+      "name": "Jane",
+      "birthday": "2000-01-02"
+      },
+    "2": {
+      "name": "Jack",
+      "birthday": "2000-01-03"
+      }
+  },
+  "teachers":
+  {
+    "0": {
+      "name": "Mary",
+      "birthday": "1977-01-01"
+      },
+    "1": {
+      "name": "Tom",
+      "birthday": "1950-01-02"
+      },
+    "2": {
+      "name": "Jerry",
+      "birthday": "1959-01-03"
+      }
+  }
+}

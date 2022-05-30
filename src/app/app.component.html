@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="./app.component.js"></script>
+  </head>
+  <body>
+    <mat-toolbar>Działający</mat-toolbar>
+      <mat-card class="login-card">
+        <mat-card-header>
+          <mat-card-title>Login</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div id="login-form">
+            <form method="get">
+              <mat-form-field>
+                <input type="tel" id="phone login" name="phone" matInput placeholder="numer telefonu" formControlName="Numer telefon" >
+              </mat-form-field><br>
+              <mat-form-field>
+                <input matInput id="pass login" name="pass" type="password" placeholder="Hasło" formControlName="Hasło">
+              </mat-form-field><br>
+              <button mat-raised-button color="primary" type="submit" id="loginSubmitBtn">Login</button>
+              <input type="hidden" name="action" value="login">
+              <input type="hidden" name="back" value="1">
+            </form>
+          </div>
+        </mat-card-content>
+      </mat-card>
+  </body>
+</html>
