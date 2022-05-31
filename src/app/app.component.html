@@ -13,7 +13,7 @@
           <div id="login-form">
             <form method="get">
               <mat-form-field>
-                <input type="tel" id="phone login" name="phone" matInput placeholder="numer telefonu" formControlName="Numer telefon" >
+                <input type="tel" id="username login" name="username" matInput placeholder="Nazwa użytkownika" formControlName="Nazwa użytkownika" >
               </mat-form-field><br>
               <mat-form-field>
                 <input matInput id="pass login" name="pass" type="password" placeholder="Hasło" formControlName="Hasło">
@@ -24,6 +24,19 @@
             </form>
           </div>
         </mat-card-content>
+        <mat-card-footer>
+          <mat-progress-bar id="LoginProgressBar" mode="indeterminate"></mat-progress-bar>
+        </mat-card-footer>
       </mat-card>
+    <script>
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      window.onload = function() {
+      if (urlParams.has("back"))
+      {
+        
+      }
+}
+    </script>
   </body>
 </html>
