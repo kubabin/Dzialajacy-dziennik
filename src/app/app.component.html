@@ -10,33 +10,115 @@
           <mat-card-title>Login</mat-card-title>
         </mat-card-header>
         <mat-card-content>
-          <div id="login-form">
-            <form method="get">
-              <mat-form-field>
-                <input type="tel" id="username login" name="username" matInput placeholder="Nazwa użytkownika" formControlName="Nazwa użytkownika" >
-              </mat-form-field><br>
-              <mat-form-field>
-                <input matInput id="pass login" name="pass" type="password" placeholder="Hasło" formControlName="Hasło">
-              </mat-form-field><br>
-              <button mat-raised-button color="primary" type="submit" id="loginSubmitBtn">Login</button>
-              <input type="hidden" name="action" value="login">
-              <input type="hidden" name="back" value="1">
-            </form>
-          </div>
+          <form>
+            <mat-form-field>
+              <input matInput placeholder="Nazwa użytkownika">
+            </mat-form-field><br>
+            <mat-form-field>
+              <input matInput type="password" placeholder="Hasło">
+            </mat-form-field><br>
+            <button mat-raised-button onclick="logmein()">Zaloguj się</button>
+          </form>
         </mat-card-content>
         <mat-card-footer>
-          <mat-progress-bar id="LoginProgressBar" mode="indeterminate"></mat-progress-bar>
+          <div id="login_footer"></div>
         </mat-card-footer>
       </mat-card>
     <script>
-      const queryString = window.location.search;
-      const urlParams = new URLSearchParams(queryString);
-      window.onload = function() {
-      if (urlParams.has("back"))
-      {
-        
+      function logmein(){
+
       }
+    </script>
+    <script>
+
+class Enum {
+  constructor(...keys) {
+    keys.forEach((key, i) => {
+      this[key] = i;
+    });
+    Object.freeze(this);
+  }
+
+  *[Symbol.iterator]() {
+    for (let key of Object.keys(this)) yield key;
+  }
 }
+class Data{
+    static accounts = require("./data/accounts.json");
+    static persons = require("./data/persons.json");
+    static presence = require("./data/presence.json");
+    static classes = require("./data/classes.json");
+}
+class AccountsService{
+  constructor(){}
+  static getAccounts(login, password){
+    Data.accounts.forEach(element => {
+      if(element.login == login && element.password == sha256(password)){
+        document.cookie = "login=" + login;
+        document.cookie = "password=" + sha256(password);
+        return element.students;
+      }
+      else {
+        return false;
+      }
+    });
+  }
+}
+class DataService{
+  constructor(){Object.freeze(ClassTypes)}
+  static ClassTypes = new Enum("normal", "sport", "twolanguage", "ukrainian");
+  static getStudentsByClass(studentClass){
+    return Data.persons.students.filter(element => element.class == studentClass);
+  }
+  static getAllStudents(){
+    return Data.persons.students;
+  }
+  static getTeachers(){
+    return Data.persons.teachers;
+  }
+  static getTeachersByClass(className){
+    return Data.persons.teachers.filter(element => element.class == className);
+  }
+  static getParents(){
+    return Data.persons.parents;
+  }
+  static getParentByStudent(studentId){
+    return Data.persons.parents.filter(element => element.studentId == studentId);
+  }
+  static getStudentClass(id){
+    return Data.persons.students.filter(element => element.id == id)[0].class;
+  }
+  static getClasses(){
+    return Data.persons.classes;
+  }
+  static addStudent(student){
+    Data.persons.students.push(student);
+  }
+  static addTeacher(teacher){
+    Data.persons.teachers.push(teacher);
+  }
+  static addParent(parent){
+    Data.persons.parents.push(parent);
+  }
+  static createClass(level, team, studentIds, school, type){
+    Data.persons.classes.push(className);
+  }
+  static getStudent(id){
+    return Data.persons.students.find(student => student.id == id);
+  }
+  static getTeacher(id){
+    return Data.persons.teachers.find(teacher => teacher.id == id);
+  }
+  static getParent(id){
+    return Data.persons.parents.find(parent => parent.id == id);
+  }
+
+}
+
+function sha256(input){
+  return crypto.createHash('sha256').update(JSON.stringify(input)).digest('hex')
+}
+
     </script>
   </body>
 </html>

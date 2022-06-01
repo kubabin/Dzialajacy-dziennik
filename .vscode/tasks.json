@@ -11,7 +11,7 @@
         {
           "label": "Build angular app",
           "type": "shell",
-          "command": "ng build --prod --base-href \"https://GitHubUserName.github.io/GitHubfolderName/\""
+          "command": "ng build --prod --base-href \"https://kubabin.github.io/Dzialajacy-dziennik/\""
         }
     ]
 }
