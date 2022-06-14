@@ -9,9 +9,14 @@
             "command": "npx angular-cli-ghpages --dir=dist/Dzialajacy-dziennik"
         },
         {
-          "label": "Build angular app",
-          "type": "shell",
-          "command": "ng build --prod --base-href \"https://kubabin.github.io/Dzialajacy-dziennik/\""
+            "label": "Build angular app",
+            "type": "shell",
+            "command": "ng build --prod --base-href \"https://kubabin.github.io/Dzialajacy-dziennik/\""
+        },
+        {
+            "label": "Start angular dev server",
+            "type": "shell",
+            "command":"ng serve -o"
         }
     ]
 }

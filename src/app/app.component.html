@@ -5,6 +5,7 @@
   </head>
   <body>
     <mat-toolbar>Działający</mat-toolbar>
+    <button mat-raised-button onclick="alert(AccountsService.isLoggedIn.toString())">Check login</button>
       <mat-card class="login-card">
         <mat-card-header>
           <mat-card-title>Login</mat-card-title>
@@ -12,12 +13,12 @@
         <mat-card-content>
           <form>
             <mat-form-field>
-              <input matInput placeholder="Nazwa użytkownika">
+              <input id="username" matInput placeholder="Nazwa użytkownika">
             </mat-form-field><br>
             <mat-form-field>
-              <input matInput type="password" placeholder="Hasło">
+              <input id="password" matInput type="password" placeholder="Hasło">
             </mat-form-field><br>
-            <button mat-raised-button onclick="logmein()">Zaloguj się</button>
+            <button type="button" mat-raised-button onclick="logmein()">Zaloguj się</button>
           </form>
         </mat-card-content>
         <mat-card-footer>
@@ -26,7 +27,8 @@
       </mat-card>
     <script>
       function logmein(){
-
+        AccountsService.login(document.getElementById("username").value, document.getElementById("password").value);
+        alert(AccountsService.isLoggedIn);
       }
     </script>
     <script>
@@ -51,18 +53,31 @@ class Data{
 }
 class AccountsService{
   constructor(){}
-  static getAccounts(login, password){
-    Data.accounts.forEach(element => {
-      if(element.login == login && element.password == sha256(password)){
-        document.cookie = "login=" + login;
-        document.cookie = "password=" + sha256(password);
-        return element.students;
+  static login(login, password){
+    if (Data.accounts.students.forEach(student => {
+      if (student.login == login && student.password == sha256(password)){
+        this.isLoggedIn = true;
+        this.user = student;
+        return true;
       }
-      else {
-        return false;
-      }
-    });
+    })){
+      return true;
+    }
+    else{
+      return false;
+    }
   }
+  static checkLogIn()
+  {
+    if(document.cookie.indexOf("login") != -1 && document.cookie.indexOf("password") != -1){
+      return true;
+    }
+    else {
+      return false;
+    }
+  }
+  static isLoggedIn = false;
+
 }
 class DataService{
   constructor(){Object.freeze(ClassTypes)}
@@ -101,7 +116,7 @@ class DataService{
     Data.persons.parents.push(parent);
   }
   static createClass(level, team, studentIds, school, type){
-    Data.persons.classes.push(className);
+    Data.persons.classes.push(level,team,studentIds,school,type);
   }
   static getStudent(id){
     return Data.persons.students.find(student => student.id == id);
@@ -111,6 +126,15 @@ class DataService{
   }
   static getParent(id){
     return Data.persons.parents.find(parent => parent.id == id);
+  }
+  static getStudentAccount(phone,password){
+    return Data.accounts.students.find(student => student.phone == phone && student.password == sha256(password));
+  }
+  static getTeacherAccount(phone,password){
+    return Data.accounts.teachers.find(teacher => teacher.phone == phone && teacher.password == sha256(password));
+  }
+  static getParentAccount(phone,password){
+    return Data.accounts.parents.find(parent => parent.phone == phone && parent.password == sha256(password));
   }
 
 }

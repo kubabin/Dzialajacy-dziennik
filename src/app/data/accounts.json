@@ -1,0 +1,13 @@
+{
+  "students":{
+    "0":{"name":"Kuba Biniek","username":"kubir", "password":"4c774c7d1d7533df5fc5a72547976dcc3b06ab484c7978c200769383a28dec99", "ids":[0]}
+  },
+  "teachers":{
+    "1":{"name":"Beata Wawrzyczek", "ids":[1]}
+  },
+  "parents":{
+    "2":{"name":"Justyna Biniek", "ids":[2], "pairedwith":3},
+    "3":{"name":"Karol Biniek", "ids":[2], "pairedwith":2}
+  }
+
+}
