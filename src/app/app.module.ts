@@ -10,6 +10,7 @@ import { DataParserModule } from './data-parser/data-parser.module';
 import { dziennikModule } from './dziennik/dziennik.module';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
+import sha256, { Hash, HMAC } from "fast-sha256";
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -33,12 +34,14 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
     DataParserModule,
     dziennikModule,
     MatProgressSpinnerModule,
-    MatProgressBarModule
+    MatProgressBarModule,
+    Hash,
+    HMAC
 
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule {
-  
+
 }

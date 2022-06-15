@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { stringify } from 'querystring';
+import * as sha256 from "fast-sha256";
 
 @Component({
   selector: 'app-root',
@@ -8,6 +9,16 @@ import { stringify } from 'querystring';
 })
 export class AppComponent {
   title = 'Dzialajacy-dziennik';
+}
+const hasher = new sha256.Hash();
+function SHA256(input:string){
+  var hashArray:Uint8Array = new Uint8Array();
+  var hashhArray = [];
+  for (var i = 0; i < input.length; i++) {
+    hashhArray.push(input.charCodeAt(i));
+  }
+  hashArray.set(hashhArray);
+  hasher.update(hashArray);
 }
 class Data{
   static accounts = require("./data/accounts.json");
@@ -40,13 +51,35 @@ static isLoggedIn = false;
 
 }
 class SchoolClass{
-  constructor(level:number, team:string){this.teachers = []; this.students = []; this.level = level; this.nameId = "" this.team = team; this.id = 0}
+  constructor(level:number, team:string){this.teachers = []; this.students = []; this.level = level; this.nameId = ""; this.team = team; this.id = 0}
   public teachers:string[];
   public students:string[];
   public id:number;
   public nameId:string;
   public team:string;
   public level:number;
+}
+class Student{
+  constructor(name:string, surname:string, classId:number, id:number){this.name = name; this.surname = surname; this.classId = classId; this.id = id;}
+  public name:string;
+  public surname:string;
+  public classId:number;
+  public id:number; //id studenta w bazie danych
+}
+class Parent{
+  constructor(name:string, surname:string, id:number, studentids:number[]){this.name = name; this.surname = surname; this.id = id; this.studentids = studentids;}
+  public name:string;
+  public surname:string;
+  public id:number; //id rodzica w bazie danych
+  public studentids:number[]; //id studentów danego rodzica
+
+}
+class Teacher{
+  constructor(name:string, surname:string, id:number, teachingClassesIds:number[]){this.name = name; this.surname = surname; this.id = id; this.teachingClassesIds = teachingClassesIds;}
+  public name:string;
+  public surname:string;
+  public id:number; //id nauczyciela w bazie danych
+  public teachingClassesIds:number[]; //id klas danego nauczyciela
 }
 class DataService{
   constructor(){}
@@ -57,63 +90,68 @@ class DataService{
       }
    });
   }
-static getStudentsByClass(className){
+static getStudentsByClass(className: string){
   let students:string[] = [];
-  Data.accounts.forEach(function(i:Array, idx:number, array:Array<number>){
+  /*Data.accounts.forEach(function(i:object, idx:number, array:Array<number>){
     if(i.class == className){
-      students.push(i);
+      students.push(i.name);
     }
-  }
-  return students;
+  }*/
 }
 
 static getTeachers(){
   return Data.accounts.teachers;
 }
-static getTeachersByClass(className){
+/*static getTeachersByClass(className){
   return Data.accounts.teachers.filter(element => element.class == className);
-}
+}*/
 static getParents(){
   return Data.accounts.parents;
 }
 static getParentByStudent(studentid: number){
-  return Data.accounts.parents.filter(element => element.studentid: number == studentid: number);
+  Data.accounts.students.forEach(function(i:object, idx:number, array:Array<number>){
+    if(i.id == studentid){
+      return i.parent;
+    }
+  })
 }
-static getStudentClass(id: number){
+/*static getStudentClass(id: number){
   return Data.accounts.students.filter(element => element.id: number == id: number)[0].class;
-}
+}*/
 static getClasses(){
   return Data.accounts.classes;
 }
-static addStudent(student){
+/*static addStudent(student){
   Data.accounts.students.push(student);
-}
-static addTeacher(teacher){
+}*/
+static addTeacher(teacher:Array<string>){
   Data.accounts.teachers.push(teacher);
 }
-static addParent(parent){
+static addParent(parent:Array<string>){
   Data.accounts.parents.push(parent);
 }
-static createClass(level: number, team:string, studentids: number, school: string[], type){
-  Data.accounts.classes.push(level,team,studentids: numbers,school,type);
+static createClass(level: number, team:string, studentids: number, school: string[], type: string){
+  Data.accounts.classes.push(level,team,studentids,school,type);
 }
-static getStudent(id: number){
+/*static getStudent(id: number){
   return Data.accounts.students.find(student => student.id: number == id: number);
-}
-static getTeacher(id: number){
+}*/
+/*static getTeacher(id: number){
   return Data.accounts.teachers.find(teacher => teacher.id: number == id: number);
-}
-static getParent(id: number){
+}*/
+/*static getParent(id: number){
   return Data.accounts.parents.find(parent => parent.id: number == id: number);
+}*/
+static getStudentAccount(phone:string,password:string ){
+
+  return Data.accounts.students.find(student => student.phone == phone && student.password == hasher.digest());
 }
-static getStudentAccount(phone,password){
-  return Data.accounts.students.find(student => student.phone == phone && student.password == sha256(password));
-}
-static getTeacherAccount(phone,password){
-  return Data.accounts.teachers.find(teacher => teacher.phone == phone && teacher.password == sha256(password));
+static getTeacherAccount(phone:string,password:string){
+  hasher.update(password);
+  return Data.accounts.teachers.find(teacher => teacher.phone == phone && teacher.password == hasher.digest(password));
 }
 static getParentAccount(phone,password){
-  return Data.accounts.parents.find(parent => parent.phone == phone && parent.password == sha256(password));
+  return Data.accounts.parents.find(parent => parent.phone == phone && parent.password == hasher.update(password));
 }
 
 }
