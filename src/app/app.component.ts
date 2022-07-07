@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { stringify } from 'querystring';
 import * as sha256 from "fast-sha256";
+import { accounts } require("./data/accounts.json");
 
 @Component({
   selector: 'app-root',
@@ -10,6 +11,7 @@ import * as sha256 from "fast-sha256";
 export class AppComponent {
   title = 'Dzialajacy-dziennik';
 }
+var textenc = new TextEncoder();
 const hasher = new sha256.Hash();
 function SHA256(input:string){
   var hashArray:Uint8Array = new Uint8Array();
@@ -21,10 +23,11 @@ function SHA256(input:string){
   hasher.update(hashArray);
 }
 class Data{
-  static accounts = require("./data/accounts.json");
+
   static presence = require("./data/presence.json");
   static classes = require("./data/classes.json");
 }
+class ActualData{}
 class AccountsService{
 constructor(){}
 static login(login:string, password:string){
@@ -60,35 +63,48 @@ class SchoolClass{
   public level:number;
 }
 class Student{
-  constructor(name:string, surname:string, classId:number, id:number){this.name = name; this.surname = surname; this.classId = classId; this.id = id;}
+  constructor(name:string,password:string,username:string, surname:string, classId:number, studentId:number, motherId:number)
+  {this.name = name;this.username = username; this.password = password; this.surname = surname; this.classId = classId; this.studentId = studentId; this.motherId = motherId;}
   public name:string;
   public surname:string;
+  public username:string;
   public classId:number;
-  public id:number; //id studenta w bazie danych
+  public studentId:number; //id studenta w bazie danych
+  public motherId:number; //id matki
+  public password:string;
 }
+
 class Parent{
-  constructor(name:string, surname:string, id:number, studentids:number[]){this.name = name; this.surname = surname; this.id = id; this.studentids = studentids;}
+  constructor(name:string,password:string,username:string, surname:string, id:number, studentids:number[])
+  {this.name = name;this.password = password;this.username = username; this.surname = surname; this.id = id; this.studentids = studentids;}
   public name:string;
+  public username:string;
+  public password:string
   public surname:string;
   public id:number; //id rodzica w bazie danych
   public studentids:number[]; //id studentów danego rodzica
 
 }
 class Teacher{
-  constructor(name:string, surname:string, id:number, teachingClassesIds:number[]){this.name = name; this.surname = surname; this.id = id; this.teachingClassesIds = teachingClassesIds;}
+  constructor(name:string,username:string, surname:string,password:string, id:number, teachingClassesIds:number[]){
+    this.name = name;this.username= username; this.password = password; this.surname = surname; this.id = id; this.teachingClassesIds = teachingClassesIds;}
   public name:string;
+  public password:string;
   public surname:string;
+  public username:string;
   public id:number; //id nauczyciela w bazie danych
   public teachingClassesIds:number[]; //id klas danego nauczyciela
 }
 class DataService{
   constructor(){}
   static getFreeClassIdNumber(){
+    let id;
     Data.classes.forEach(function(i:number, idx:number, array:Array<number>){
       if (idx === array.length - 1){
-          return idx + 1;
+          id = idx + 1;
       }
-   });
+    });
+    return id;
   }
 static getStudentsByClass(className: string){
   let students:string[] = [];
@@ -98,7 +114,13 @@ static getStudentsByClass(className: string){
     }
   }*/
 }
-
+static getStudents(){
+  let returningArray = new Array<Student>();
+  Data.accounts.students.forEach(function(i:Student, idx:number, array:Array<number>){
+    returningArray.push(i);
+  });
+  return returningArray;
+}
 static getTeachers(){
   return Data.accounts.teachers;
 }
@@ -108,12 +130,14 @@ static getTeachers(){
 static getParents(){
   return Data.accounts.parents;
 }
-static getParentByStudent(studentid: number){
-  Data.accounts.students.forEach(function(i:object, idx:number, array:Array<number>){
-    if(i.id == studentid){
-      return i.parent;
+static getParentByStudent(studentId: number){
+  let id;
+  Data.accounts.students.forEach(function(i:Student, idx:number, array:Array<number>){
+    if(i.studentId == studentId){
+      id = i.motherId;
     }
   })
+  return id;
 }
 /*static getStudentClass(id: number){
   return Data.accounts.students.filter(element => element.id: number == id: number)[0].class;
@@ -142,19 +166,40 @@ static createClass(level: number, team:string, studentids: number, school: strin
 /*static getParent(id: number){
   return Data.accounts.parents.find(parent => parent.id: number == id: number);
 }*/
-static getStudentAccount(phone:string,password:string ){
+static getStudentAccount(username:string,password:string ){
+  let account;
 
-  return Data.accounts.students.find(student => student.phone == phone && student.password == hasher.digest());
+  hasher.update(textenc.encode(username));
+  Data.accounts.students.forEach(function(i:Student, idx:number, array:Array<number>){
+
+    if(i.username == username && i.password == hasher.digest().toString()){
+      account = i;
+    }
+  })
+  return account;
 }
-static getTeacherAccount(phone:string,password:string){
-  hasher.update(password);
-  return Data.accounts.teachers.find(teacher => teacher.phone == phone && teacher.password == hasher.digest(password));
+static getTeacherAccount(username:string,password:string){
+  let account;
+  hasher.update(textenc.encode(password));
+  return Data.accounts.teachers.forEach(function(i:Teacher, idx:number, array:Array<number>){
+    if (i.username == username && i.password == hasher.digest().toString()){
+      account = i;
+    }
+  })
 }
-static getParentAccount(phone,password){
-  return Data.accounts.parents.find(parent => parent.phone == phone && parent.password == hasher.update(password));
+static getParentAccount(username:string,password:string){
+  let account:Parent;
+  return Data.accounts.parents.forEach(function(i:Parent, idx:number, array:Array<number>){
+    if (i.username == username && i.password == hasher.digest().toString()){
+      account = i;
+    }
+    return account;
+  })
+
+  }
 }
 
-}
+
 
 
 
